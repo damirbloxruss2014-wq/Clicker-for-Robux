@@ -54,7 +54,7 @@
             </div>
             <div class="shop-item">
                 <div class="item-info">
-                    <span class="item-name">Удача кодера</span>
+                    <span class="item-name">Удача кодера (<span id="luck-percent">0%</span>)</span>
                     <span class="item-desc">Шанс на критический клик (x5)</span>
                 </div>
                 <button id="up-luck-btn" class="buy-btn" onclick="buyLuckUpgrade()">500 RP</button>
@@ -80,17 +80,18 @@
         </div>
 
         <!-- Центр: Иконка для клика -->
-        <div class="game-center">
-            <div id="click-target" class="roblox-icon">
-                <!-- Сюда в будущем встанет картинка, пока просто неоновый текст -->
-                <span class="roblox-symbol">R$</span>
-            </div>
-        </div>
+      <div class="game-center">
+    <div id="click-target" class="roblox-icon">
+        <img src="roblox.png" alt="Robux" class="click-img">
+    </div>
+</div>
 
-        <!-- Левый нижний угол: Минималистичный счетчик -->
+        <!-- Левый нижний угол: Минималистичный счетчик в рамке -->
         <div class="counter-box">
             <span class="counter-label">баланс</span>
-            <span id="balance-display" class="counter-value">000000</span>
+            <div class="counter-border">
+                <span id="balance-display" class="counter-value">000000</span>
+            </div>
             <span class="counter-currency">RoPoints</span>
         </div>
 
