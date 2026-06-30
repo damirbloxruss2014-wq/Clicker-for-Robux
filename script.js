@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let luckUpgradePrice = 500;
     
     let usedCodes = []; 
+    let realityMode = false; 
 
     let currentWithdrawAmount = 0;
     let currentWithdrawCost = 0;
@@ -27,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // Инициализация соглашения при входе
     modal.classList.remove("hidden");
     mainContent.classList.add("blurred");
     checkbox.checked = false; 
@@ -51,70 +51,49 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.classList.remove("hidden");
     };
 
-    // ФУНКЦИЯ ГЕНЕРАЦИИ СЛУЧАЙНЫХ ЛЕТАЮЩИХ ДОЛЛАРОВ НА ФОНЕ
     function spawnBgDollar() {
         if (modal.classList.contains("hidden")) {
             const dollar = document.createElement("div");
             dollar.className = "bg-dollar";
             dollar.innerText = "$";
-            
-            // 1. Рандомное место спавна по всей ширине экрана (от 0% до 100%)
             let randomLeft = Math.random() * 100;
-            dollar.style.left = `${randomLeft}vw`;
-            
-            // 2. Рандомный размер (глубина): от совсем маленьких до крупных
-            let randomScale = Math.random() * 1.2 + 0.4; // от 0.4 до 1.6
-            dollar.style.transform = `scale(${randomScale})`;
-            
-            // 3. Рандомная скорость полета (от 6 до 13 секунд)
+            dollar.style.left = randomLeft + "vw";
+            let randomScale = Math.random() * 1.2 + 0.4; 
+            dollar.style.transform = "scale(" + randomScale + ")";
             let randomDuration = Math.random() * 7 + 6;
-            dollar.style.animationDuration = `${randomDuration}s`;
-            
-            // 4. Рандомная прозрачность (чтобы некоторые доллары были на заднем плане)
-            dollar.style.opacity = Math.random() * 0.15 + 0.05; // от 0.05 до 0.20
-            
+            dollar.style.animationDuration = randomDuration + "s";
+            dollar.style.opacity = Math.random() * 0.15 + 0.05; 
             bgDollarsContainer.appendChild(dollar);
-            
-            // Удаляем элемент строго по окончании его индивидуальной анимации
-            setTimeout(() => { dollar.remove(); }, randomDuration * 1000);
+            setTimeout(function() { dollar.remove(); }, randomDuration * 1000);
         }
     }
-
-
-    // Спавним фоновый доллар каждые 1.5 секунды
-    setInterval(spawnBgDollar, 1500);
-
+    setInterval(spawnBgDollar, 1200);
     function updateUI() {
         balanceDisplay.innerText = String(Math.floor(balance)).padStart(6, '0');
-        upClickBtn.innerText = `${Math.floor(clickUpgradePrice)} RP`;
-        upAutoBtn.innerText = `${Math.floor(autoUpgradePrice)} RP`;
-        
+        upClickBtn.innerText = Math.floor(clickUpgradePrice) + " RP";
+        upAutoBtn.innerText = Math.floor(autoUpgradePrice) + " RP";
         let currentChance = luckLevel * 5;
-        luckPercentDisplay.innerText = `${currentChance}%`;
-        
+        luckPercentDisplay.innerText = currentChance + "%";
         if (luckLevel >= 10) {
             upLuckBtn.innerText = "МАКС.";
             upLuckBtn.disabled = true;
         } else {
-            upLuckBtn.innerText = `${Math.floor(luckUpgradePrice)} RP`;
+            upLuckBtn.innerText = Math.floor(luckUpgradePrice) + " RP";
         }
     }
 
-    // КЛИК
     document.getElementById("click-target").addEventListener("click", function (event) {
         let currentGain = clickPower;
         let isCrit = false;
-        
         if (luckLevel > 0) {
             let chance = luckLevel * 0.05; 
             if (Math.random() < chance) {
                 currentGain *= 5;
                 isCrit = true;
                 balanceDisplay.style.color = "#ffffff";
-                setTimeout(() => balanceDisplay.style.color = "#39ff14", 150);
+                setTimeout(function() { balanceDisplay.style.color = "#39ff14"; }, 150);
             }
         }
-        
         balance += currentGain;
         createParticle(event.clientX, event.clientY, currentGain, isCrit);
         updateUI();
@@ -123,42 +102,61 @@ document.addEventListener("DOMContentLoaded", function () {
     function createParticle(x, y, amount, isCrit) {
         const particle = document.createElement("div");
         particle.className = isCrit ? "click-particle crit" : "click-particle";
-        particle.innerText = `+${amount}`;
-        particle.style.left = `${x - 15}px`;
-        particle.style.top = `${y - 15}px`;
+        particle.innerText = "+" + amount;
+        particle.style.left = (x - 15) + "px";
+        particle.style.top = (y - 15) + "px";
         particlesContainer.appendChild(particle);
-        setTimeout(() => { particle.remove(); }, 800);
+        setTimeout(function() { particle.remove(); }, 800);
     }
 
-    // ПРОМОКОДЫ
     window.activatePromo = function() {
         const input = document.getElementById("promo-input");
         const msg = document.getElementById("code-status-msg");
         const enteredCode = input.value.trim();
-
         if (enteredCode === "") return;
-
+        if (usedCodes.includes(enteredCode)) {
+            msg.style.color = "#ff3333";
+            msg.innerText = "ЭТОТ КОД УЖЕ АКТИВИРОВАН!";
+            input.value = "";
+            setTimeout(function() { msg.innerText = ""; }, 3000);
+            return;
+        }
         if (enteredCode === "KODTest0110") {
-            if (usedCodes.includes("KODTest0110")) {
-                msg.style.color = "#ff3333";
-                msg.innerText = "ЭТОТ КОД УЖЕ АКТИВИРОВАН!";
-            } else {
-                balance += 1000000;
-                usedCodes.push("KODTest0110");
-                msg.style.color = "#39ff14";
-                msg.innerText = "ЧИТ-КОД АКТИВИРОВАН! +1,000,000 RP";
-                updateUI();
-            }
-        } else {
+            balance += 1000000;
+            usedCodes.push("KODTest0110");
+            msg.style.color = "#39ff14";
+            msg.innerText = "ЧИТ-КОД АКТИВИРОВАН! +1,000,000 RP";
+            updateUI();
+        } 
+        else if (enteredCode === "newbie") {
+            balance += 500;
+            usedCodes.push("newbie");
+            msg.style.color = "#39ff14";
+            msg.innerText = "КОД АКТИВИРОВАН! +500 RP";
+            updateUI();
+        } 
+        else if (enteredCode === "IzTT") {
+            balance += 1500;
+            usedCodes.push("IzTT");
+            msg.style.color = "#39ff14";
+            msg.innerText = "КОД АКТИВИРОВАН! +1500 RP";
+            updateUI();
+        } 
+        else if (enteredCode === "zamanimTT") {
+            balance += 5004;
+            usedCodes.push("zamanimTT");
+            realityMode = true; 
+            msg.style.color = "#39ff14";
+            msg.innerText = "БЛОГЕРСКИЙ КОД! +5004 RP (МОД РЕАЛЬНОСТИ)";
+            updateUI();
+        } 
+        else {
             msg.style.color = "#ff3333";
             msg.innerText = "НЕВЕРНЫЙ КОД!";
         }
-
         input.value = ""; 
-        setTimeout(() => { msg.innerText = ""; }, 3000); 
+        setTimeout(function() { msg.innerText = ""; }, 3000); 
     };
-
-    // АПГРЕЙДЫ
     window.buyClickUpgrade = function() {
         if (balance >= clickUpgradePrice) {
             balance -= clickUpgradePrice;
@@ -196,19 +194,17 @@ document.addEventListener("DOMContentLoaded", function () {
     window.toggleMenu = function(menuId) {
         const targetMenu = document.getElementById(menuId);
         const allMenus = document.querySelectorAll('.dropdown-panel');
-        allMenus.forEach(menu => {
+        allMenus.forEach(function(menu) {
             if (menu.id !== menuId) menu.classList.remove('active');
         });
         targetMenu.classList.toggle('active');
     };
 
-    // ТРАНСФЕР И ИЗДЕВАТЕЛЬСТВО С ОБНУЛЕНИЕМ
     window.openUsernamePrompt = function(rbxAmount, rpCost) {
         if (balance < rpCost) {
-            alert(`Недостаточно RoPoints! Нужно еще ${rpCost - Math.floor(balance)} RP.`);
+            alert("Недостаточно RoPoints! Нужно еще " + (rpCost - Math.floor(balance)) + " RP.");
             return;
         }
-
         currentWithdrawAmount = rbxAmount;
         currentWithdrawCost = rpCost;
         document.getElementById("withdraw-menu").classList.remove('active');
@@ -224,9 +220,14 @@ document.addEventListener("DOMContentLoaded", function () {
     window.confirmWithdraw = function() {
         const usernameInput = document.getElementById("roblox-username-input").value.trim();
         const errorMsg = document.getElementById("username-error-msg");
+        const englishRegex = /^[a-zA-Z0-9_]+$/;
 
         if (usernameInput.length < 3 || usernameInput.length > 20) {
-            errorMsg.innerText = "Ошибка: никнейм в Roblox должен содержать от 3 до 20 символов!";
+            errorMsg.innerText = "Ошибка: никнейм должен быть от 3 до 20 символов!";
+            return;
+        }
+        if (!englishRegex.test(usernameInput)) {
+            errorMsg.innerText = "Ошибка: никнейм должен быть только НА АНГЛИЙСКОМ!";
             return;
         }
 
@@ -240,29 +241,33 @@ document.addEventListener("DOMContentLoaded", function () {
         loader.classList.remove("hidden");
         spinner.classList.remove("hidden");
         closeBtn.classList.add("hidden");
-        loaderText.innerText = `Поиск пользователя ${usernameInput} в базе Roblox API...`;
+        loaderText.innerText = "Поиск пользователя " + usernameInput + " в базе Roblox API...";
 
-        setTimeout(() => { 
-            loaderText.innerText = `Инициализация трансфера ${currentWithdrawAmount} RBX на аккаунт ${usernameInput}...`; 
+        setTimeout(function() { 
+            loaderText.innerText = "Инициализация трансфера " + currentWithdrawAmount + " RBX на аккаунт " + usernameInput + "..."; 
         }, 2500);
         
-        setTimeout(() => { 
+        setTimeout(function() { 
             loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков транзакции..."; 
         }, 5000);
         
-        setTimeout(() => {
+        setTimeout(function() {
             spinner.classList.add("hidden");
             
-            // ОБНУЛЕНИЕ ВСЕГО БАЛАНСА ПОД НУЛЬ
-            balance = 0;
-            updateUI();
+            if (realityMode) {
+                balance -= currentWithdrawCost; 
+                updateUI();
+                realityMode = false; 
 
-            loaderText.innerHTML = `
-                <span style="color:#39ff14; font-size: 26px; font-weight:bold; text-shadow: 0 0 10px #39ff14;">ХА-ХА! &gt;:D</span><br><br>
-                <span style="color:#ffffff; font-size:15px;">Мы реально <strong>забрали твои очки</strong>, но робуксы мы тебе не дадим!</span><br><br>
-                <span style="color:#ff3333; font-weight:bold;">С твоего счета успешно списано ВСЁ ПОД ЧИСТУЮ.</span><br><br>
-                Никакого вывода на аккаунт <u>${usernameInput}</u> нет, ведь сайт шуточный! Спасибо за очки, иди кликай заново!
-            `;
+                loaderText.innerHTML = "УСПЕШНО!<br><br>Заявка на вывод " + currentWithdrawAmount + " RBX одобрена.<br><br>Статус: Отправлено в очередь выплат.<br><br>Робуксы поступят на аккаунт " + usernameInput + " в течение 3-7 рабочих дней.";
+                closeBtn.innerText = "ОТЛИЧНО!";
+            } else {
+                balance = 0; 
+                updateUI();
+
+                loaderText.innerHTML = "ХА-ХА! &gt;:D<br><br>Мы реально забрали твои очки, но робуксы мы тебе не дадим!<br><br>С твоего счета успешно списано ВСЁ ПОД ЧИСТУЮ.<br><br>Никакого вывода на аккаунт " + usernameInput + " нет, ведь сайт шуточный! Спасибо за очки, иди кликай заново!";
+                closeBtn.innerText = "МНЕ ВСЁ ЯСНО :(";
+            }
             closeBtn.classList.remove("hidden");
         }, 7500);
     };
