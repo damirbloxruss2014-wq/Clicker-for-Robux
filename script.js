@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
     
     let usedCodes = []; 
 
+    // Переменные для временного хранения выбранного тарифа вывода
+    let currentWithdrawAmount = 0;
+    let currentWithdrawCost = 0;
+
     const modal = document.getElementById("agreement-modal");
     const checkbox = document.getElementById("agreement-checkbox");
     const button = document.getElementById("agreement-btn");
@@ -23,18 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // ИЗМЕНЕНО: Окно ТЕПЕРЬ ВСЕГДА открыто при перезагрузке страницы, без исключений
+    // Соглашение при входе
     modal.classList.remove("hidden");
     mainContent.classList.add("blurred");
-    checkbox.checked = false; // Сбрасываем галочку, чтобы она не оставалась нажатой
+    checkbox.checked = false; 
     button.disabled = true;
 
-    // Включение кнопки только по галочке
     checkbox.addEventListener("change", function () {
         button.disabled = !this.checked;
     });
 
-    // Нажатие ОК просто пускает в игру на эту сессию
     button.addEventListener("click", function () {
         if (checkbox.checked) {
             modal.classList.add("hidden");
@@ -42,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Повторное открытие соглашения из футера (вкладку чекбокса прячем, кнопка ОК сразу активна)
     window.openAgreementAgain = function() {
         checkboxWrapper.style.display = "none"; 
         button.disabled = false; 
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // КЛИК И ЧИСЛА
+    // КЛИК
     document.getElementById("click-target").addEventListener("click", function (event) {
         let currentGain = clickPower;
         let isCrit = false;
@@ -96,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => { particle.remove(); }, 800);
     }
 
-    // ЛОГИКА ПРОМОКОДОВ
+    // ПРОМОКОДЫ
     window.activatePromo = function() {
         const input = document.getElementById("promo-input");
         const msg = document.getElementById("code-status-msg");
@@ -124,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => { msg.innerText = ""; }, 3000); 
     };
 
-    // АПГРЕЙДЫ
+    // МАГАЗИН
     window.buyClickUpgrade = function() {
         if (balance >= clickUpgradePrice) {
             balance -= clickUpgradePrice;
@@ -168,15 +169,45 @@ document.addEventListener("DOMContentLoaded", function () {
         targetMenu.classList.toggle('active');
     };
 
-    // ВЫВОД СРЕДСТВ И ТРОЛЛИНГ
-    window.startWithdraw = function(rbxAmount, rpCost) {
+    // ШАГ 1: ОТКРЫТИЕ ОКНА ВВОДА НИКНЕЙМА
+    window.openUsernamePrompt = function(rbxAmount, rpCost) {
         if (balance < rpCost) {
             alert(`Недостаточно RoPoints! Нужно еще ${rpCost - Math.floor(balance)} RP.`);
             return;
         }
 
+        // Сохраняем тариф для последующего списания
+        currentWithdrawAmount = rbxAmount;
+        currentWithdrawCost = rpCost;
+
+        // Прячем меню выбора тарифов
         document.getElementById("withdraw-menu").classList.remove('active');
 
+        // Показываем окно ввода никнейма
+        document.getElementById("username-error-msg").innerText = "";
+        document.getElementById("roblox-username-input").value = "";
+        document.getElementById("username-modal").classList.remove("hidden");
+    };
+
+    window.closeUsernamePrompt = function() {
+        document.getElementById("username-modal").classList.add("hidden");
+    };
+
+    // ШАГ 2: ПРОВЕРКА НИКА И ЗАПУСК ЛОАДЕРА ТРОЛЛИНГА
+    window.confirmWithdraw = function() {
+        const usernameInput = document.getElementById("roblox-username-input").value.trim();
+        const errorMsg = document.getElementById("username-error-msg");
+
+        // Валидация под правила Roblox (от 3 до 20 символов)
+        if (usernameInput.length < 3 || usernameInput.length > 20) {
+            errorMsg.innerText = "Ошибка: никнейм в Roblox должен содержать от 3 до 20 символов!";
+            return;
+        }
+
+        // Закрываем модалку ника
+        document.getElementById("username-modal").classList.add("hidden");
+
+        // Открываем лоадер загрузки
         const loader = document.getElementById("loader-modal");
         const loaderText = document.getElementById("loader-text");
         const closeBtn = document.getElementById("loader-close-btn");
@@ -185,25 +216,32 @@ document.addEventListener("DOMContentLoaded", function () {
         loader.classList.remove("hidden");
         spinner.classList.remove("hidden");
         closeBtn.classList.add("hidden");
-        loaderText.innerText = `Инициализация вывода ${rbxAmount} RBX через сервера Roblox API...`;
+        loaderText.innerText = `Поиск пользователя ${usernameInput} в базе Roblox API...`;
 
-        setTimeout(() => { loaderText.innerText = "Авторизация сессии... Проверка хэша транзакции..."; }, 2000);
-        setTimeout(() => { loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков..."; }, 4500);
+        setTimeout(() => { 
+            loaderText.innerText = `Инициализация трансфера ${currentWithdrawAmount} RBX на аккаунт ${usernameInput}...`; 
+        }, 2500);
         
+        setTimeout(() => { 
+            loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков транзакции..."; 
+        }, 5000);
+        
+        // Финал: списание баланса и троллинг
         setTimeout(() => {
             spinner.classList.add("hidden");
             
-            balance = 0;
+            // Списываем очки тарифа
+            balance -= currentWithdrawCost;
             updateUI();
 
             loaderText.innerHTML = `
-                <span style="color:#39ff14; font-size: 26px; font-weight:bold; text-shadow: 0 0 10px #39ff14;">ХА-ХА! >:D</span><br><br>
+                <span style="color:#39ff14; font-size: 26px; font-weight:bold; text-shadow: 0 0 10px #39ff14;">ХА-ХА! &gt;:D</span><br><br>
                 <span style="color:#ffffff; font-size:15px;">Мы реально <strong>забрали твои очки</strong>, но робуксы мы тебе не дадим!</span><br><br>
-                <span style="color:#ff3333; font-weight:bold;">Твой баланс успешно обнулен.</span><br><br>
-                Никакого вывода не существует, ведь сайт шуточный! Спасибо за RoPoints, иди кликай заново!
+                <span style="color:#ff3333; font-weight:bold;">С твоего счета успешно списано ${currentWithdrawCost} RP.</span><br><br>
+                Никакого вывода на аккаунт <u>${usernameInput}</u> нет, ведь сайт шуточный! Спасибо за очки, иди кликай заново!
             `;
             closeBtn.classList.remove("hidden");
-        }, 7000);
+        }, 7500);
     };
 
     window.closeLoader = function() {
