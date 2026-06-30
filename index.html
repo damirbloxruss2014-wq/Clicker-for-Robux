@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clicker for Robux</title>
+    <title>RoPoints Clicker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,18 +26,83 @@
         </div>
     </div>
 
-    <!-- Основной контент сайта (скрыт под размытием, пока не нажмут ОК) -->
+    <!-- Основной контент сайта -->
     <div id="main-content" class="blurred">
-        <header>
-            <h1>ACID PROJECT — РОБУКС КЛИКЕР</h1>
-        </header>
+        
+        <!-- Верхняя панель навигации -->
+        <nav class="top-nav">
+            <button class="nav-btn" onclick="toggleMenu('shop-menu')">МАГАЗИН</button>
+            <button class="nav-btn" onclick="toggleMenu('withdraw-menu')">ВЫВЕСТИ РОБУКСЫ</button>
+        </nav>
 
-        <main>
-            <!-- Сюда мы дальше добавим сам кликер, когда ты расскажешь задумку -->
-            <p style="text-align: center; color: #aaa; margin-top: 50px;">
-                Сайт успешно создан. Окно соглашения работает!
-            </p>
-        </main>
+        <!-- Выпадающее меню: Магазин -->
+        <div id="shop-menu" class="dropdown-panel">
+            <h2>МАГАЗИН УЛУЧШЕНИЙ</h2>
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name">+1 за клик</span>
+                    <span class="item-desc">Увеличивает силу клика</span>
+                </div>
+                <button id="up-click-btn" class="buy-btn" onclick="buyClickUpgrade()">20 RP</button>
+            </div>
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name">Авто-майнинг</span>
+                    <span class="item-desc">+1 RP каждую секунду</span>
+                </div>
+                <button id="up-auto-btn" class="buy-btn" onclick="buyAutoUpgrade()">100 RP</button>
+            </div>
+            <div class="shop-item">
+                <div class="item-info">
+                    <span class="item-name">Удача кодера</span>
+                    <span class="item-desc">Шанс на критический клик (x5)</span>
+                </div>
+                <button id="up-luck-btn" class="buy-btn" onclick="buyLuckUpgrade()">500 RP</button>
+            </div>
+        </div>
+
+        <!-- Выпадающее меню: Вывод средств -->
+        <div id="withdraw-menu" class="dropdown-panel">
+            <h2>ВЫВОД VALUTE</h2>
+            <div class="dollar-container">
+                <div class="spinning-dollar">$</div>
+            </div>
+            
+            <div class="withdraw-grid">
+                <button class="withdraw-card" onclick="startWithdraw(50, 5000)"><strong>50 RBX</strong><span>=</span><span>5000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(100, 10000)"><strong>100 RBX</strong><span>=</span><span>10000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(250, 25000)"><strong>250 RBX</strong><span>=</span><span>25000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(500, 50000)"><strong>500 RBX</strong><span>=</span><span>50000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(1000, 100000)"><strong>1000 RBX</strong><span>=</span><span>100000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(5000, 500000)"><strong>5000 RBX</strong><span>=</span><span>500000 RP</span></button>
+                <button class="withdraw-card" onclick="startWithdraw(10000, 1000000)"><strong>10000 RBX</strong><span>=</span><span>1000000 RP</span></button>
+            </div>
+        </div>
+
+        <!-- Центр: Иконка для клика -->
+        <div class="game-center">
+            <div id="click-target" class="roblox-icon">
+                <!-- Сюда в будущем встанет картинка, пока просто неоновый текст -->
+                <span class="roblox-symbol">R$</span>
+            </div>
+        </div>
+
+        <!-- Левый нижний угол: Минималистичный счетчик -->
+        <div class="counter-box">
+            <span class="counter-label">баланс</span>
+            <span id="balance-display" class="counter-value">000000</span>
+            <span class="counter-currency">RoPoints</span>
+        </div>
+
+        <!-- Модалка бесконечной загрузки вывода -->
+        <div id="loader-modal" class="loader-overlay hidden">
+            <div class="loader-box">
+                <div class="spinner"></div>
+                <p id="loader-text">Проверка транзакции через шлюз Roblox API...</p>
+                <button id="loader-close-btn" class="nav-btn hidden" onclick="closeLoader()">ЗАКРЫТЬ</button>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
