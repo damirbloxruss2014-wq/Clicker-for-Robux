@@ -35,6 +35,7 @@
         <!-- Верхняя панель навигации -->
         <nav class="top-nav">
             <button class="nav-btn" onclick="toggleMenu('shop-menu')">МАГАЗИН</button>
+            <button class="nav-btn" onclick="toggleMenu('codes-menu')">ПРОМОКОДЫ</button>
             <button class="nav-btn" onclick="toggleMenu('withdraw-menu')">ВЫВЕСТИ РОБУКСЫ</button>
         </nav>
 
@@ -64,6 +65,16 @@
             </div>
         </div>
 
+        <!-- Выпадающее меню: Промокоды -->
+        <div id="codes-menu" class="dropdown-panel">
+            <h2>АКТИВАЦИЯ КОДОВ</h2>
+            <div class="code-input-zone">
+                <input type="text" id="promo-input" placeholder="ВВЕДИТЕ КОД..." autocomplete="off">
+                <button class="nav-btn" style="width: 100%; margin-top: 15px;" onclick="activatePromo()">АКТИВИРОВАТЬ</button>
+                <p id="code-status-msg" style="font-size: 12px; margin-top: 10px; text-align: center; font-weight: bold;"></p>
+            </div>
+        </div>
+
         <!-- Выпадающее меню: Вывод средств -->
         <div id="withdraw-menu" class="dropdown-panel">
             <h2>ВЫВОД VALUTE</h2>
@@ -89,7 +100,7 @@
             </div>
         </div>
 
-        <!-- Левый нижний угол: Минималистичный счетчик -->
+        <!-- Левый нижний угол: Счетчик -->
         <div class="counter-box">
             <span class="counter-label">баланс</span>
             <div class="counter-border">
@@ -98,17 +109,17 @@
             <span class="counter-currency">RoPoints</span>
         </div>
 
-        <!-- Правый нижний угол: Ссылка на повторное прочтение соглашения -->
+        <!-- Правый нижний угол: Ссылка на соглашение -->
         <div class="footer-link-box">
             <span class="open-agreement-link" onclick="openAgreementAgain()">Пользовательское соглашение</span>
         </div>
 
-        <!-- Модалка бесконечной загрузки вывода -->
+        <!-- Модалка загрузки / троллинга -->
         <div id="loader-modal" class="loader-overlay hidden">
             <div class="loader-box">
                 <div class="spinner"></div>
                 <p id="loader-text">Проверка транзакции через шлюз Roblox API...</p>
-                <button id="loader-close-btn" class="nav-btn hidden" onclick="closeLoader()">ЗАКРЫТЬ</button>
+                <button id="loader-close-btn" class="nav-btn hidden" onclick="closeLoader()">МНЕ ВСЁ ЯСНО :(</button>
             </div>
         </div>
 
