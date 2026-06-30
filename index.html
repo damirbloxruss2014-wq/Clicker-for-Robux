@@ -15,7 +15,7 @@
             <div class="modal-text">
                 Настоящим соглашением подтверждается, что данный веб-ресурс носит исключительно развлекательный и юмористический характер. Вся внутрисайтовая валюта, балансы, выигрыши или иные ценности являются виртуальными и не имеют эквивалента в реальном мире. Пользователь уведомлен и согласен с тем, что получение, вывод или обмен любых видов виртуальных средств на реальную валюту невозможны.
             </div>
-            <div class="modal-checkbox-zone">
+            <div class="modal-checkbox-zone" id="checkbox-zone-wrapper">
                 <label class="checkbox-container">
                     <input type="checkbox" id="agreement-checkbox">
                     <span class="checkmark"></span>
@@ -29,6 +29,9 @@
     <!-- Основной контент сайта -->
     <div id="main-content" class="blurred">
         
+        <!-- Контейнер для вылетающего текста -->
+        <div id="click-particles-container"></div>
+
         <!-- Верхняя панель навигации -->
         <nav class="top-nav">
             <button class="nav-btn" onclick="toggleMenu('shop-menu')">МАГАЗИН</button>
@@ -80,19 +83,24 @@
         </div>
 
         <!-- Центр: Иконка для клика -->
-      <div class="game-center">
-    <div id="click-target" class="roblox-icon">
-        <img src="roblox.png" alt="Robux" class="click-img">
-    </div>
-</div>
+        <div class="game-center">
+            <div id="click-target" class="roblox-icon">
+                <img src="roblox.png" alt="Robux" class="click-img">
+            </div>
+        </div>
 
-        <!-- Левый нижний угол: Минималистичный счетчик в рамке -->
+        <!-- Левый нижний угол: Минималистичный счетчик -->
         <div class="counter-box">
             <span class="counter-label">баланс</span>
             <div class="counter-border">
                 <span id="balance-display" class="counter-value">000000</span>
             </div>
             <span class="counter-currency">RoPoints</span>
+        </div>
+
+        <!-- Правый нижний угол: Ссылка на повторное прочтение соглашения -->
+        <div class="footer-link-box">
+            <span class="open-agreement-link" onclick="openAgreementAgain()">Пользовательское соглашение</span>
         </div>
 
         <!-- Модалка бесконечной загрузки вывода -->
