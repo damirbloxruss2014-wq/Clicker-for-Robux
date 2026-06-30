@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     let usedCodes = []; 
 
-    // Переменные для временного хранения выбранного тарифа вывода
     let currentWithdrawAmount = 0;
     let currentWithdrawCost = 0;
 
@@ -22,12 +21,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const balanceDisplay = document.getElementById("balance-display");
     const luckPercentDisplay = document.getElementById("luck-percent");
     const particlesContainer = document.getElementById("click-particles-container");
+    const bgDollarsContainer = document.getElementById("background-dollars");
 
     const upClickBtn = document.getElementById("up-click-btn");
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // Соглашение при входе
+    // Инициализация соглашения при входе
     modal.classList.remove("hidden");
     mainContent.classList.add("blurred");
     checkbox.checked = false; 
@@ -50,6 +50,32 @@ document.addEventListener("DOMContentLoaded", function () {
         mainContent.classList.add("blurred");
         modal.classList.remove("hidden");
     };
+
+    // ФУНКЦИЯ ГЕНЕРАЦИИ ЛЕТАЮЩИХ ДОЛЛАРОВ НА ФОНЕ
+    function spawnBgDollar() {
+        // Запускаем доллары только если соглашение закрыто, чтобы не мешать чтению
+        if (modal.classList.contains("hidden")) {
+            const dollar = document.createElement("div");
+            dollar.className = "bg-dollar";
+            dollar.innerText = "$";
+            
+            // Рандомизируем начальную позицию по оси X (слева внизу)
+            let randomX = Math.random() * 60 - 30; // от -30px до +30px
+            dollar.style.left = `${randomX}px`;
+            
+            // Случайный размер, чтобы была глубина
+            let randomScale = Math.random() * 0.8 + 0.6; // от 0.6 до 1.4
+            dollar.style.transform = `scale(${randomScale})`;
+            
+            bgDollarsContainer.appendChild(dollar);
+            
+            // Удаляем через 10 секунд, когда анимация закончится
+            setTimeout(() => { dollar.remove(); }, 10000);
+        }
+    }
+
+    // Спавним фоновый доллар каждые 1.5 секунды
+    setInterval(spawnBgDollar, 1500);
 
     function updateUI() {
         balanceDisplay.innerText = String(Math.floor(balance)).padStart(6, '0');
@@ -125,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => { msg.innerText = ""; }, 3000); 
     };
 
-    // МАГАЗИН
+    // АПГРЕЙДЫ
     window.buyClickUpgrade = function() {
         if (balance >= clickUpgradePrice) {
             balance -= clickUpgradePrice;
@@ -169,21 +195,16 @@ document.addEventListener("DOMContentLoaded", function () {
         targetMenu.classList.toggle('active');
     };
 
-    // ШАГ 1: ОТКРЫТИЕ ОКНА ВВОДА НИКНЕЙМА
+    // ТРАНСФЕР И ИЗДЕВАТЕЛЬСТВО С ОБНУЛЕНИЕМ
     window.openUsernamePrompt = function(rbxAmount, rpCost) {
         if (balance < rpCost) {
             alert(`Недостаточно RoPoints! Нужно еще ${rpCost - Math.floor(balance)} RP.`);
             return;
         }
 
-        // Сохраняем тариф для последующего списания
         currentWithdrawAmount = rbxAmount;
         currentWithdrawCost = rpCost;
-
-        // Прячем меню выбора тарифов
         document.getElementById("withdraw-menu").classList.remove('active');
-
-        // Показываем окно ввода никнейма
         document.getElementById("username-error-msg").innerText = "";
         document.getElementById("roblox-username-input").value = "";
         document.getElementById("username-modal").classList.remove("hidden");
@@ -193,21 +214,17 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("username-modal").classList.add("hidden");
     };
 
-    // ШАГ 2: ПРОВЕРКА НИКА И ЗАПУСК ЛОАДЕРА ТРОЛЛИНГА
     window.confirmWithdraw = function() {
         const usernameInput = document.getElementById("roblox-username-input").value.trim();
         const errorMsg = document.getElementById("username-error-msg");
 
-        // Валидация под правила Roblox (от 3 до 20 символов)
         if (usernameInput.length < 3 || usernameInput.length > 20) {
             errorMsg.innerText = "Ошибка: никнейм в Roblox должен содержать от 3 до 20 символов!";
             return;
         }
 
-        // Закрываем модалку ника
         document.getElementById("username-modal").classList.add("hidden");
 
-        // Открываем лоадер загрузки
         const loader = document.getElementById("loader-modal");
         const loaderText = document.getElementById("loader-text");
         const closeBtn = document.getElementById("loader-close-btn");
@@ -226,18 +243,17 @@ document.addEventListener("DOMContentLoaded", function () {
             loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков транзакции..."; 
         }, 5000);
         
-        // Финал: списание баланса и троллинг
         setTimeout(() => {
             spinner.classList.add("hidden");
             
-            // Списываем очки тарифа
-            balance -= currentWithdrawCost;
+            // ОБНУЛЕНИЕ ВСЕГО БАЛАНСА ПОД НУЛЬ
+            balance = 0;
             updateUI();
 
             loaderText.innerHTML = `
                 <span style="color:#39ff14; font-size: 26px; font-weight:bold; text-shadow: 0 0 10px #39ff14;">ХА-ХА! &gt;:D</span><br><br>
                 <span style="color:#ffffff; font-size:15px;">Мы реально <strong>забрали твои очки</strong>, но робуксы мы тебе не дадим!</span><br><br>
-                <span style="color:#ff3333; font-weight:bold;">С твоего счета успешно списано ${currentWithdrawCost} RP.</span><br><br>
+                <span style="color:#ff3333; font-weight:bold;">С твоего счета успешно списано ВСЁ ПОД ЧИСТУЮ.</span><br><br>
                 Никакого вывода на аккаунт <u>${usernameInput}</u> нет, ведь сайт шуточный! Спасибо за очки, иди кликай заново!
             `;
             closeBtn.classList.remove("hidden");
