@@ -23,28 +23,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // ИСПРАВЛЕНО: Строгая проверка при входе
-    if (localStorage.getItem("robux_clicker_agreement") === "true") {
-        modal.classList.add("hidden");
-        mainContent.classList.remove("blurred");
-    } else {
-        // Если соглашение еще не принято — принудительно включаем блокировку
-        modal.classList.remove("hidden");
-        mainContent.classList.add("blurred");
-        button.disabled = true;
-    }
+    // ИЗМЕНЕНО: Окно ТЕПЕРЬ ВСЕГДА открыто при перезагрузке страницы, без исключений
+    modal.classList.remove("hidden");
+    mainContent.classList.add("blurred");
+    checkbox.checked = false; // Сбрасываем галочку, чтобы она не оставалась нажатой
+    button.disabled = true;
 
+    // Включение кнопки только по галочке
     checkbox.addEventListener("change", function () {
         button.disabled = !this.checked;
     });
 
+    // Нажатие ОК просто пускает в игру на эту сессию
     button.addEventListener("click", function () {
-        modal.classList.add("hidden");
-        mainContent.classList.remove("blurred");
-        localStorage.setItem("robux_clicker_agreement", "true");
+        if (checkbox.checked) {
+            modal.classList.add("hidden");
+            mainContent.classList.remove("blurred");
+        }
     });
 
-    // Повторное открытие соглашения из футера (без чекбокса)
+    // Повторное открытие соглашения из футера (вкладку чекбокса прячем, кнопка ОК сразу активна)
     window.openAgreementAgain = function() {
         checkboxWrapper.style.display = "none"; 
         button.disabled = false; 
