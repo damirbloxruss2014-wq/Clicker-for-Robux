@@ -51,28 +51,35 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.classList.remove("hidden");
     };
 
-    // ФУНКЦИЯ ГЕНЕРАЦИИ ЛЕТАЮЩИХ ДОЛЛАРОВ НА ФОНЕ
+    // ФУНКЦИЯ ГЕНЕРАЦИИ СЛУЧАЙНЫХ ЛЕТАЮЩИХ ДОЛЛАРОВ НА ФОНЕ
     function spawnBgDollar() {
-        // Запускаем доллары только если соглашение закрыто, чтобы не мешать чтению
         if (modal.classList.contains("hidden")) {
             const dollar = document.createElement("div");
             dollar.className = "bg-dollar";
             dollar.innerText = "$";
             
-            // Рандомизируем начальную позицию по оси X (слева внизу)
-            let randomX = Math.random() * 60 - 30; // от -30px до +30px
-            dollar.style.left = `${randomX}px`;
+            // 1. Рандомное место спавна по всей ширине экрана (от 0% до 100%)
+            let randomLeft = Math.random() * 100;
+            dollar.style.left = `${randomLeft}vw`;
             
-            // Случайный размер, чтобы была глубина
-            let randomScale = Math.random() * 0.8 + 0.6; // от 0.6 до 1.4
+            // 2. Рандомный размер (глубина): от совсем маленьких до крупных
+            let randomScale = Math.random() * 1.2 + 0.4; // от 0.4 до 1.6
             dollar.style.transform = `scale(${randomScale})`;
+            
+            // 3. Рандомная скорость полета (от 6 до 13 секунд)
+            let randomDuration = Math.random() * 7 + 6;
+            dollar.style.animationDuration = `${randomDuration}s`;
+            
+            // 4. Рандомная прозрачность (чтобы некоторые доллары были на заднем плане)
+            dollar.style.opacity = Math.random() * 0.15 + 0.05; // от 0.05 до 0.20
             
             bgDollarsContainer.appendChild(dollar);
             
-            // Удаляем через 10 секунд, когда анимация закончится
-            setTimeout(() => { dollar.remove(); }, 10000);
+            // Удаляем элемент строго по окончании его индивидуальной анимации
+            setTimeout(() => { dollar.remove(); }, randomDuration * 1000);
         }
     }
+
 
     // Спавним фоновый доллар каждые 1.5 секунды
     setInterval(spawnBgDollar, 1500);
