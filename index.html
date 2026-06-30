@@ -13,7 +13,8 @@
         <div class="modal-box">
             <h2>Пользовательское соглашение</h2>
             <div class="modal-text">
-                Настоящим соглашением подтверждается, что данный веб-ресурс носит исключительно развлекательный и юмористический характер. Вся внутрисайтовая валюта, балансы, выигрыши или иные ценности являются виртуальными и не имеют эквивалента в реальном мире. Пользователь уведомлен и согласен с тем, что получение, вывод или обмен любых видов виртуальных средств на реальную валюту невозможны.
+                Настоящим соглашением подтверждается, что данный веб-ресурс носит исключительно развлекательный и юмористический характер. Вся внутрисайтовая валюта, балансы, выигрыши или иные ценности являются виртуальными и не имеют эквивалента в реальном мире. Пользователь уведомлен и согласен с тем, что получение, вывод или обмен любых видов виртуальных средств на реальную валюту невозможны.<br><br>
+                <strong>Политика конфиденциальности:</strong> Любые вводимые пользователем данные, включая игровые никнеймы, используются исключительно для проверки в текущей сессии браузера, никуда не сохраняются, не собираются и не распространяются.
             </div>
             <div class="modal-checkbox-zone" id="checkbox-zone-wrapper">
                 <label class="checkbox-container">
@@ -32,14 +33,14 @@
         <!-- Контейнер для вылетающего текста -->
         <div id="click-particles-container"></div>
 
-        <!-- Верхняя панель навигации -->
+        <!-- Навигация -->
         <nav class="top-nav">
             <button class="nav-btn" onclick="toggleMenu('shop-menu')">МАГАЗИН</button>
             <button class="nav-btn" onclick="toggleMenu('codes-menu')">ПРОМОКОДЫ</button>
             <button class="nav-btn" onclick="toggleMenu('withdraw-menu')">ВЫВЕСТИ РОБУКСЫ</button>
         </nav>
 
-        <!-- Выпадающее меню: Магазин -->
+        <!-- Меню: Магазин -->
         <div id="shop-menu" class="dropdown-panel">
             <h2>МАГАЗИН УЛУЧШЕНИЙ</h2>
             <div class="shop-item">
@@ -65,7 +66,7 @@
             </div>
         </div>
 
-        <!-- Выпадающее меню: Промокоды -->
+        <!-- Меню: Промокоды -->
         <div id="codes-menu" class="dropdown-panel">
             <h2>АКТИВАЦИЯ КОДОВ</h2>
             <div class="code-input-zone">
@@ -75,7 +76,7 @@
             </div>
         </div>
 
-        <!-- Выпадающее меню: Вывод средств -->
+        <!-- Меню: Вывод средств -->
         <div id="withdraw-menu" class="dropdown-panel">
             <h2>ВЫВОД VALUTE</h2>
             <div class="dollar-container">
@@ -83,35 +84,30 @@
             </div>
             
             <div class="withdraw-grid">
-                <button class="withdraw-card" onclick="startWithdraw(50, 5000)"><strong>50 RBX</strong><span>=</span><span>5000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(100, 10000)"><strong>100 RBX</strong><span>=</span><span>10000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(250, 25000)"><strong>250 RBX</strong><span>=</span><span>25000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(500, 50000)"><strong>500 RBX</strong><span>=</span><span>50000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(1000, 100000)"><strong>1000 RBX</strong><span>=</span><span>100000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(5000, 500000)"><strong>5000 RBX</strong><span>=</span><span>500000 RP</span></button>
-                <button class="withdraw-card" onclick="startWithdraw(10000, 1000000)"><strong>10000 RBX</strong><span>=</span><span>1000000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(50, 5000)"><strong>50 RBX</strong><span>=</span><span>5000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(100, 10000)"><strong>100 RBX</strong><span>=</span><span>10000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(250, 25000)"><strong>250 RBX</strong><span>=</span><span>25000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(500, 50000)"><strong>500 RBX</strong><span>=</span><span>50000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(1000, 100000)"><strong>1000 RBX</strong><span>=</span><span>100000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(5000, 500000)"><strong>5000 RBX</strong><span>=</span><span>500000 RP</span></button>
+                <button class="withdraw-card" onclick="openUsernamePrompt(10000, 1000000)"><strong>10000 RBX</strong><span>=</span><span>1000000 RP</span></button>
             </div>
         </div>
 
-        <!-- Центр: Иконка для клика -->
-        <div class="game-center">
-            <div id="click-target" class="roblox-icon">
-                <img src="roblox.png" alt="Robux" class="click-img">
+        <!-- Окно ввода Никнейма перед выводом -->
+        <div id="username-modal" class="loader-overlay hidden">
+            <div class="loader-box">
+                <h3 style="color: #39ff14; margin-top: 0; font-size: 16px; letter-spacing: 1px;">ВВЕДИТЕ ИГРОВОЙ НИКНЕЙМ</h3>
+                <p style="color: #aaa; font-size: 12px; margin-bottom: 15px;">Укажите ваш точный ник в Roblox для трансфера валюты.</p>
+                <div class="code-input-zone">
+                    <input type="text" id="roblox-username-input" placeholder="Roblox Username..." autocomplete="off">
+                </div>
+                <p id="username-error-msg" style="color: #ff3333; font-size: 11px; margin-top: 8px; font-weight: bold;"></p>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="nav-btn" style="flex: 1; padding: 8px;" onclick="closeUsernamePrompt()">ОТМЕНА</button>
+                    <button class="nav-btn" style="flex: 1; padding: 8px;" onclick="confirmWithdraw()">ДАЛЕЕ</button>
+                </div>
             </div>
-        </div>
-
-        <!-- Левый нижний угол: Счетчик -->
-        <div class="counter-box">
-            <span class="counter-label">баланс</span>
-            <div class="counter-border">
-                <span id="balance-display" class="counter-value">000000</span>
-            </div>
-            <span class="counter-currency">RoPoints</span>
-        </div>
-
-        <!-- Правый нижний угол: Ссылка на соглашение -->
-        <div class="footer-link-box">
-            <span class="open-agreement-link" onclick="openAgreementAgain()">Пользовательское соглашение</span>
         </div>
 
         <!-- Модалка загрузки / троллинга -->
@@ -121,6 +117,27 @@
                 <p id="loader-text">Проверка транзакции через шлюз Roblox API...</p>
                 <button id="loader-close-btn" class="nav-btn hidden" onclick="closeLoader()">МНЕ ВСЁ ЯСНО :(</button>
             </div>
+        </div>
+
+        <!-- Центр: Иконка кликера -->
+        <div class="game-center">
+            <div id="click-target" class="roblox-icon">
+                <img src="roblox.png" alt="Robux" class="click-img">
+            </div>
+        </div>
+
+        <!-- Счетчик баланса -->
+        <div class="counter-box">
+            <span class="counter-label">баланс</span>
+            <div class="counter-border">
+                <span id="balance-display" class="counter-value">000000</span>
+            </div>
+            <span class="counter-currency">RoPoints</span>
+        </div>
+
+        <!-- Ссылка на соглашение внизу -->
+        <div class="footer-link-box">
+            <span class="open-agreement-link" onclick="openAgreementAgain()">Пользовательское соглашение</span>
         </div>
 
     </div>
