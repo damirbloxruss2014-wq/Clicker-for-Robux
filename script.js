@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let autoUpgradePrice = 100;
     let luckUpgradePrice = 500;
     
-    let usedCodes = []; // Массив для использованных промокодов
+    let usedCodes = []; 
 
     const modal = document.getElementById("agreement-modal");
     const checkbox = document.getElementById("agreement-checkbox");
@@ -23,22 +23,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // Инициализация соглашения
+    // ИСПРАВЛЕНО: Строгая проверка при входе
     if (localStorage.getItem("robux_clicker_agreement") === "true") {
         modal.classList.add("hidden");
         mainContent.classList.remove("blurred");
+    } else {
+        // Если соглашение еще не принято — принудительно включаем блокировку
+        modal.classList.remove("hidden");
+        mainContent.classList.add("blurred");
+        button.disabled = true;
     }
+
     checkbox.addEventListener("change", function () {
         button.disabled = !this.checked;
     });
+
     button.addEventListener("click", function () {
         modal.classList.add("hidden");
         mainContent.classList.remove("blurred");
         localStorage.setItem("robux_clicker_agreement", "true");
     });
 
+    // Повторное открытие соглашения из футера (без чекбокса)
     window.openAgreementAgain = function() {
-        checkboxWrapper.style.add;
         checkboxWrapper.style.display = "none"; 
         button.disabled = false; 
         mainContent.classList.add("blurred");
@@ -115,8 +122,8 @@ document.addEventListener("DOMContentLoaded", function () {
             msg.innerText = "НЕВЕРНЫЙ КОД!";
         }
 
-        input.value = ""; // Очищаем поле ввода
-        setTimeout(() => { msg.innerText = ""; }, 3000); // Стираем надпись через 3 сек
+        input.value = ""; 
+        setTimeout(() => { msg.innerText = ""; }, 3000); 
     };
 
     // АПГРЕЙДЫ
@@ -163,14 +170,13 @@ document.addEventListener("DOMContentLoaded", function () {
         targetMenu.classList.toggle('active');
     };
 
-    // КОЛДОВСКОЙ ВЫВОД СРЕДСТВ И ТРОЛЛИНГ
+    // ВЫВОД СРЕДСТВ И ТРОЛЛИНГ
     window.startWithdraw = function(rbxAmount, rpCost) {
         if (balance < rpCost) {
             alert(`Недостаточно RoPoints! Нужно еще ${rpCost - Math.floor(balance)} RP.`);
             return;
         }
 
-        // Закрываем меню вывода, чтобы не мешалось
         document.getElementById("withdraw-menu").classList.remove('active');
 
         const loader = document.getElementById("loader-modal");
@@ -186,11 +192,9 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => { loaderText.innerText = "Авторизация сессии... Проверка хэша транзакции..."; }, 2000);
         setTimeout(() => { loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков..."; }, 4500);
         
-        // Момент жестокой правды!
         setTimeout(() => {
             spinner.classList.add("hidden");
             
-            // Забираем ВСЕ очки баланса под чистую прямо тут
             balance = 0;
             updateUI();
 
