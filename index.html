@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker for Robux</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Всплывающее окно соглашения -->
+    <div id="agreement-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Пользовательское соглашение</h2>
+            <div class="modal-text">
+                Настоящим соглашением подтверждается, что данный веб-ресурс носит исключительно развлекательный и юмористический характер. Вся внутрисайтовая валюта, балансы, выигрыши или иные ценности являются виртуальными и не имеют эквивалента в реальном мире. Пользователь уведомлен и согласен с тем, что получение, вывод или обмен любых видов виртуальных средств на реальную валюту невозможны.
+            </div>
+            <div class="modal-checkbox-zone">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="agreement-checkbox">
+                    <span class="checkmark"></span>
+                    Я принимаю пользовательское соглашение
+                </label>
+            </div>
+            <button id="agreement-btn" disabled>ОК</button>
+        </div>
+    </div>
+
+    <!-- Основной контент сайта (скрыт под размытием, пока не нажмут ОК) -->
+    <div id="main-content" class="blurred">
+        <header>
+            <h1>ACID PROJECT — РОБУКС КЛИКЕР</h1>
+        </header>
+
+        <main>
+            <!-- Сюда мы дальше добавим сам кликер, когда ты расскажешь задумку -->
+            <p style="text-align: center; color: #aaa; margin-top: 50px;">
+                Сайт успешно создан. Окно соглашения работает!
+            </p>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
