@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let clickUpgradePrice = 20;
     let autoUpgradePrice = 100;
     let luckUpgradePrice = 500;
+    
+    let usedCodes = []; // Массив для использованных промокодов
 
     const modal = document.getElementById("agreement-modal");
     const checkbox = document.getElementById("agreement-checkbox");
@@ -21,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const upAutoBtn = document.getElementById("up-auto-btn");
     const upLuckBtn = document.getElementById("up-luck-btn");
 
-    // Инициализация соглашения при первом входе
+    // Инициализация соглашения
     if (localStorage.getItem("robux_clicker_agreement") === "true") {
         modal.classList.add("hidden");
         mainContent.classList.remove("blurred");
@@ -35,10 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("robux_clicker_agreement", "true");
     });
 
-    // ПОЛУЧЕНИЕ СОГЛАШЕНИЯ ИЗ УГЛА САЙТА (БЕЗ ГАЛОЧКИ)
     window.openAgreementAgain = function() {
-        checkboxWrapper.style.display = "none"; // Прячем чекбокс
-        button.disabled = false; // Разблокируем кнопку ОК сразу
+        checkboxWrapper.style.add;
+        checkboxWrapper.style.display = "none"; 
+        button.disabled = false; 
         mainContent.classList.add("blurred");
         modal.classList.remove("hidden");
     };
@@ -59,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // КЛИК И СОЗДАНИЕ ВЫЛЕТАЮЩИХ ЦИФР
+    // КЛИК И ЧИСЛА
     document.getElementById("click-target").addEventListener("click", function (event) {
         let currentGain = clickPower;
         let isCrit = false;
@@ -83,19 +85,41 @@ document.addEventListener("DOMContentLoaded", function () {
         const particle = document.createElement("div");
         particle.className = isCrit ? "click-particle crit" : "click-particle";
         particle.innerText = `+${amount}`;
-        
-        // Размещаем цифру точно там, где находится курсор мышки
         particle.style.left = `${x - 15}px`;
         particle.style.top = `${y - 15}px`;
-        
         particlesContainer.appendChild(particle);
-        
-        // Удаляем элемент после завершения анимации взлета
-        setTimeout(() => {
-            particle.remove();
-        }, 800);
+        setTimeout(() => { particle.remove(); }, 800);
     }
 
+    // ЛОГИКА ПРОМОКОДОВ
+    window.activatePromo = function() {
+        const input = document.getElementById("promo-input");
+        const msg = document.getElementById("code-status-msg");
+        const enteredCode = input.value.trim();
+
+        if (enteredCode === "") return;
+
+        if (enteredCode === "KODTest0110") {
+            if (usedCodes.includes("KODTest0110")) {
+                msg.style.color = "#ff3333";
+                msg.innerText = "ЭТОТ КОД УЖЕ АКТИВИРОВАН!";
+            } else {
+                balance += 1000000;
+                usedCodes.push("KODTest0110");
+                msg.style.color = "#39ff14";
+                msg.innerText = "ЧИТ-КОД АКТИВИРОВАН! +1,000,000 RP";
+                updateUI();
+            }
+        } else {
+            msg.style.color = "#ff3333";
+            msg.innerText = "НЕВЕРНЫЙ КОД!";
+        }
+
+        input.value = ""; // Очищаем поле ввода
+        setTimeout(() => { msg.innerText = ""; }, 3000); // Стираем надпись через 3 сек
+    };
+
+    // АПГРЕЙДЫ
     window.buyClickUpgrade = function() {
         if (balance >= clickUpgradePrice) {
             balance -= clickUpgradePrice;
@@ -139,14 +163,15 @@ document.addEventListener("DOMContentLoaded", function () {
         targetMenu.classList.toggle('active');
     };
 
+    // КОЛДОВСКОЙ ВЫВОД СРЕДСТВ И ТРОЛЛИНГ
     window.startWithdraw = function(rbxAmount, rpCost) {
         if (balance < rpCost) {
             alert(`Недостаточно RoPoints! Нужно еще ${rpCost - Math.floor(balance)} RP.`);
             return;
         }
 
-        balance -= rpCost;
-        updateUI();
+        // Закрываем меню вывода, чтобы не мешалось
+        document.getElementById("withdraw-menu").classList.remove('active');
 
         const loader = document.getElementById("loader-modal");
         const loaderText = document.getElementById("loader-text");
@@ -160,9 +185,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         setTimeout(() => { loaderText.innerText = "Авторизация сессии... Проверка хэша транзакции..."; }, 2000);
         setTimeout(() => { loaderText.innerText = "Подключение к пулу ликвидности... Синхронизация блоков..."; }, 4500);
+        
+        // Момент жестокой правды!
         setTimeout(() => {
             spinner.classList.add("hidden");
-            loaderText.innerHTML = `<span style="color:#ff3333; font-weight:bold;">ОШИБКА 0x404: ТРАНЗАКЦИЯ ЗАБЛОКИРОВАНА.</span><br><br>Обнаружена слишком высокая активность аккаунта. В целях безопасности вывод заморожен. Попробуйте накопить больше RoPoints и повторить попытку позже.`;
+            
+            // Забираем ВСЕ очки баланса под чистую прямо тут
+            balance = 0;
+            updateUI();
+
+            loaderText.innerHTML = `
+                <span style="color:#39ff14; font-size: 26px; font-weight:bold; text-shadow: 0 0 10px #39ff14;">ХА-ХА! >:D</span><br><br>
+                <span style="color:#ffffff; font-size:15px;">Мы реально <strong>забрали твои очки</strong>, но робуксы мы тебе не дадим!</span><br><br>
+                <span style="color:#ff3333; font-weight:bold;">Твой баланс успешно обнулен.</span><br><br>
+                Никакого вывода не существует, ведь сайт шуточный! Спасибо за RoPoints, иди кликай заново!
+            `;
             closeBtn.classList.remove("hidden");
         }, 7000);
     };
